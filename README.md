@@ -8,9 +8,9 @@ esp8266 mini D1
 
 LGL 工作室 VFD 8位显示模块
 
-<img src="img/README/e3f7060a5dccdef12487e0c1453e141.jpg" alt="e3f7060a5dccdef12487e0c1453e141" style="zoom: 33%;" />
+![e3f7060a5dccdef12487e0c1453e141](img/README/e3f7060a5dccdef12487e0c1453e141.jpg)
 
-<img src="img/README/Step1-D1-MINI参数表.png" alt="Step1-D1-MINI参数表" style="zoom:50%;" />
+![Step1-D1-MINI参数表](img/README/Step1-D1-MINI参数表.png)
 
 ```c
 //适用于esp8266的引脚
@@ -21,4 +21,4 @@ uint8_t Reset = 1; 	// TX
 uint8_t en    = 3;  // RX
 ```
 
-<video src="../../../Documents/WeChat Files/wxid_50hwfgychev922/FileStorage/Video/2023-01/demo.mp4"></video>
+<video src="demo.mp4"></video>
