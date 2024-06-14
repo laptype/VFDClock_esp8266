@@ -22,3 +22,8 @@ uint8_t en    = 3;  // RX
 ```
 
 <video src="demo.mp4"></video>
+
+
+CH340驱动版本：https://www.wch-ic.com/downloads/file/65.html?time=2023-03-16 22:57:59
+
+arduino选择开发板WeMos D1 R1
