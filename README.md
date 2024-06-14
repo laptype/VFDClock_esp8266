@@ -12,6 +12,9 @@ LGL 工作室 VFD 8位显示模块
 
 # 滚动动画
 
+<img src="https://gcore.jsdelivr.net/gh/laptype/cloud@main/img/README/23-06-417-demo-7c.gif" alt="show" />
+
+
 ![demo](https://gcore.jsdelivr.net/gh/laptype/cloud@main/img/README/23-06-417-demo-7c.gif)
 
 ![Step1-D1-MINI参数表](img/README/Step1-D1-MINI参数表.png)
