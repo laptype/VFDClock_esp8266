@@ -12,7 +12,7 @@ LGL 工作室 VFD 8位显示模块
 
 # 滚动动画
 
-![demo](img/README/demo.gif)(https://github.com/laptype/VFDClock_esp8266/blob/main/img/README/demo.gif)
+![demo](img/README/demo.gif)
 
 ![Step1-D1-MINI参数表](img/README/Step1-D1-MINI参数表.png)
 
