@@ -83,21 +83,27 @@ void VFD_WriteStr(unsigned char x, char *str)
   
   x:位置，有ROOM位置;*s:要显示的字符字模
 *******************************/
-void VFD_WriteUserFont(unsigned char x, unsigned char y, unsigned char *s)
+void VFD_WriteUserFont(unsigned char x, unsigned char y,unsigned char *s)
 {
   unsigned char i = 0;
+
+  // 设置显示位置
   digitalWrite(cs, LOW);
-  spi_write_data(0x40 + y);
-  for (i = 0; i < 7; i++)
-    spi_write_data(s[i]);
+  spi_write_data(0x20 + x); // 行地址
+  spi_write_data(0x00 + y); // 列地址
   digitalWrite(cs, HIGH);
 
+  // 设置自定义字符的地址
   digitalWrite(cs, LOW);
-  spi_write_data(0x20 + x);
-  spi_write_data(0x00 + y);
+  spi_write_data(0x40 + y); // 地址寄存器起始位置
+  for (i = 0; i < 5; i++)
+  {
+    spi_write_data(s[i]);
+  }
   digitalWrite(cs, HIGH);
 
   VFD_show();
+
 }
 /******************************
   VFD 开关  
@@ -108,6 +114,6 @@ void VFD_enable(bool enable) {
   } else {
     digitalWrite(en, LOW);    
   }
-  delay(20);
+  delayMicroseconds(100);
 }
 

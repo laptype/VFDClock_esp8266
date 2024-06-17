@@ -6,12 +6,14 @@
 
 FrameRefresh::TimePeriod displayPeriods[] = {
     {10, 0, 12, 0},
-    {13, 30, 17, 30},
+    {13, 0, 17, 30},
     {18, 0, 23, 0},
 };
 
 bool enable_display = true;
-WebControl webControl; // 创建WebControl对象
+
+FrameRefresh frame = FrameRefresh();
+WebControl webControl = WebControl(&frame); // 创建WebControl对象
 
 void setup() {
 
@@ -33,7 +35,11 @@ void setup() {
   delay(1000);
   // 初始化Web
   webControl.setupServer();
-  VFD_setBrightness(128); // 和VFD_init隔一段时间设置
+  VFD_setBrightness(85); // 和VFD_init隔一段时间设置
+  delay(20);  
+  frame.freshDisplay();
+  // VFD_WriteStr(0, "00:00:00");
+  delay(20);  
 }
 
 void clock_loop() {
@@ -43,23 +49,27 @@ void clock_loop() {
   if(now_mill >= time_out) 
   {  
     time_out = now_mill + 1000;
-    FrameRefresh::FrameDisplayTime();
+    frame.FrameDisplayTime();
     delay(100);
   }
 }
 
 void loop() {
   // display time 
-  bool cur_enable_display = !WebControl::hasSetTime || FrameRefresh::display_time(displayPeriods, 3);
+  bool cur_enable_display = !WebControl::hasSetTime || frame.display_time(displayPeriods, 3);
   if (!enable_display && cur_enable_display) {
     VFD_enable(true);
     enable_display = cur_enable_display;
+    frame.freshDisplay();
+    delay(20);
+    frame.freshDisplay();
   }
   if (enable_display && !cur_enable_display) {
     VFD_enable(false);
     enable_display = cur_enable_display;
   }
-  clock_loop();
-  webControl.processRequests();
-
+  if (enable_display) {
+    clock_loop();
+    webControl.processRequests();    
+  }
 }

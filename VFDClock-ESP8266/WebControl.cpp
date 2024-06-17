@@ -79,6 +79,17 @@ function sendTime() {
   var timeString = now.toTimeString().split(' ')[0];
   sendRequest('/time?value=' + encodeURIComponent(timeString));
 }
+function toggleFont() {
+  sendRequest('/toggleFont');
+  var button = document.getElementById('fontButton');
+  if (button.getAttribute('data-font-state') === 'bold') {
+    button.setAttribute('data-font-state', 'regular');
+    button.innerHTML = 'Set Bold Font';
+  } else {
+    button.setAttribute('data-font-state', 'bold');
+    button.innerHTML = 'Set Regular Font';
+  }
+}
 </script>
 </head>
 <body>
@@ -87,17 +98,22 @@ function sendTime() {
 <p><button onclick="sendRequest('/off')">Turn Off</button></p>
 <p>Brightness: <input type="range" min="0" max="255" value=")rawliteral" + String(brightness) + R"rawliteral(" onchange="updateBrightness(this.value)"></p>
 <p><button onclick="sendTime()">Set Current Time</button></p>
-<p id="status">OFF</p>
+<p><button id="fontButton" data-font-state=")rawliteral" + (isBold ? "bold" : "regular") + R"rawliteral(" onclick="toggleFont()">)rawliteral" + (isBold ? "Set Regular Font" : "Set Bold Font") + R"rawliteral(</button></p>
+<p id="status"></p>
 </body>
 </html>
 )rawliteral");
 }
 
 
-
 void WebControl::handleLEDOn() {
   server.send(200, "text/plain", "ON");
   VFD_enable(true);
+  if (frameRefresh) {
+    frameRefresh->freshDisplay();
+    delay(20);
+    frameRefresh->freshDisplay();
+  }
 }
 
 void WebControl::handleLEDOff() {
@@ -112,6 +128,15 @@ void WebControl::handleBrightness() {
   server.send(200, "text/plain", "brightness set to " + brightnessValue);
 }
 
+void WebControl::handleToggleFont() {
+  isBold = !isBold;
+  server.send(200, "text/plain", isBold ? "Bold font set" : "Regular font set");
+  if (frameRefresh) {
+    frameRefresh->setFont(isBold);
+  }
+  
+}
+
 void WebControl::handleTime() {
   String time = server.arg("value");
   hasSetTime = true;
@@ -120,7 +145,7 @@ void WebControl::handleTime() {
   int minute = time.substring(3, 5).toInt();
   int second = time.substring(6, 8).toInt();
   setTime(hour, minute, second, day(), month(), year()); // Assumes date is unchanged
-
+  
   server.send(200, "text/plain", "Current time is " + time);
 }
 
@@ -159,6 +184,17 @@ void WebControl::handleNotFound() {
   server.send(302, "text/plain", "");
 }
 
+
+
+
+void WebControl::handleClient() {
+  server.handleClient();
+}
+
+void WebControl::processNextRequest() {
+  dnsServer.processNextRequest();
+}
+
 void WebControl::enterLowPowerMode() {
   WiFi.setSleepMode(WIFI_LIGHT_SLEEP); // 设置WiFi为浅睡眠模式
   delay(1);                            // 确保设置生效
@@ -175,14 +211,6 @@ void WebControl::checkWiFiAndSleep() {
   } else {
     exitLowPowerMode();
   }
-}
-
-void WebControl::handleClient() {
-  server.handleClient();
-}
-
-void WebControl::processNextRequest() {
-  dnsServer.processNextRequest();
 }
 
 void WebControl::processRequests() {
@@ -216,6 +244,7 @@ void WebControl::setupServer() {
   server.on("/off", [this]() { handleLEDOff(); });
   server.on("/brightness", [this]() { handleBrightness(); });
   server.on("/time", [this]() { handleTime(); });
+  server.on("/toggleFont", [this]() { handleToggleFont(); });
   server.onNotFound([this]() { handleNotFound(); });
 
   // 启动Web服务器
