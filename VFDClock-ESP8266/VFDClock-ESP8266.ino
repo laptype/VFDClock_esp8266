@@ -68,8 +68,6 @@ void loop() {
     VFD_enable(false);
     enable_display = cur_enable_display;
   }
-  if (enable_display) {
-    clock_loop();
-    webControl.processRequests();    
-  }
+  clock_loop();
+  webControl.processRequests();    
 }

@@ -216,6 +216,7 @@ void WebControl::exitLowPowerMode() {
 
 void WebControl::checkWiFiAndSleep() {
   if (WiFi.softAPgetStationNum() == 0) {
+    // clearUnloggedTokens();
     userTokens.clear();  // 清空 userTokens map
     enterLowPowerMode();
   } else {
