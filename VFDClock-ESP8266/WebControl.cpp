@@ -3,6 +3,9 @@
 
 bool WebControl::hasSetTime = false;
 
+/**
+  rawliteral用来方便地定义和嵌入包含HTML和JavaScript代码的长字符串，而不需要对其中的特殊字符进行转义。
+*/
 const char WebControl::loginPage[] PROGMEM = R"rawliteral(
 <html>
 <head>
@@ -44,7 +47,8 @@ function sendLoginRequest() {
 </html>
 )rawliteral";
 
-const char WebControl::mainPage[] PROGMEM = R"rawliteral(
+void WebControl::initMainPage() {
+  mainPage = String(R"rawliteral(
 <html>
 <head>
 <title>Main</title>
@@ -81,12 +85,13 @@ function sendTime() {
 <h1>VFD Control</h1>
 <p><button onclick="sendRequest('/on')">Turn On</button></p>
 <p><button onclick="sendRequest('/off')">Turn Off</button></p>
-<p>Brightness: <input type="range" min="0" max="255" value="128" onchange="updateBrightness(this.value)"></p>
+<p>Brightness: <input type="range" min="0" max="255" value=")rawliteral" + String(brightness) + R"rawliteral(" onchange="updateBrightness(this.value)"></p>
 <p><button onclick="sendTime()">Set Current Time</button></p>
 <p id="status">OFF</p>
 </body>
 </html>
-)rawliteral";
+)rawliteral");
+}
 
 
 
@@ -102,7 +107,7 @@ void WebControl::handleLEDOff() {
 
 void WebControl::handleBrightness() {
   String brightnessValue = server.arg("value");
-  int brightness = brightnessValue.toInt();
+  brightness = brightnessValue.toInt();
   VFD_setBrightness(brightness);
   server.send(200, "text/plain", "brightness set to " + brightnessValue);
 }
@@ -125,7 +130,9 @@ void WebControl::handleLoginPage() {
 
 void WebControl::handleMainPage() {
   if (isLoggedIn) {
-    server.send_P(200, "text/html", mainPage);
+    // 初始化HTML页面
+    this->initMainPage();
+    server.send_P(200, "text/html", mainPage.c_str());
   } else {
     server.sendHeader("Location", "/");
     server.send(302, "text/plain", ""); // 重定向到登录页面
@@ -191,6 +198,7 @@ void WebControl::processRequests() {
 }
 
 void WebControl::setupServer() {
+
   // 设置WiFi AP（不加密码）
   const char* ssid = "Loading...🚀";
   WiFi.softAP(ssid); // 不加密码

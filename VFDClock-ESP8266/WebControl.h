@@ -15,6 +15,7 @@ public:
     void processRequests();
 
     static bool hasSetTime;
+    int brightness = 100; // Default brightness value
 
 private:
     const byte DNS_PORT = 53;
@@ -39,9 +40,10 @@ private:
     void handleBrightness();
     void handleTime();
     void handleNotFound();
+    void initMainPage();
 
     static const char loginPage[];
-    static const char mainPage[];
+    String mainPage; // mainPage作为String来处理
 };
 
 #endif
