@@ -5,6 +5,7 @@
 #include <ESP8266WebServer.h>
 #include <DNSServer.h>
 #include <TimeLib.h>
+#include <map> // 使用C++标准库的map进行token管理
 #include "FrameRefresh.h"
 
 class WebControl {
@@ -27,6 +28,7 @@ private:
     bool isLoggedIn;  // 用于会话管理
 
     FrameRefresh* frameRefresh; // Pointer to FrameRefresh
+    std::map<String, bool> userTokens; // 存储token及其登录状态
     
     void handleClient();
     void checkWiFiAndSleep();
@@ -43,8 +45,9 @@ private:
     void handleToggleFont();
     void handleNotFound();
     void initMainPage();
+    void initLoginPage(String token);
 
-    static const char loginPage[];
+    String loginPage;
     String mainPage; // mainPage作为String来处理
 };
 

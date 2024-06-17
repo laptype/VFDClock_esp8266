@@ -6,7 +6,8 @@ bool WebControl::hasSetTime = false;
 /**
   rawliteral用来方便地定义和嵌入包含HTML和JavaScript代码的长字符串，而不需要对其中的特殊字符进行转义。
 */
-const char WebControl::loginPage[] PROGMEM = R"rawliteral(
+void WebControl::initLoginPage(String token) {
+  loginPage = String(R"rawliteral(
 <html>
 <head>
 <title>Login</title>
@@ -22,30 +23,33 @@ button { width: 100%; padding: 20px; font-size: 1.5rem; margin: 10px 0; }
 <script>
 function sendLoginRequest() {
   var password = document.getElementById('password').value;
+  var token = document.getElementById('token').value;
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       if (this.responseText === 'success') {
-        window.location.href = '/main';
+        window.location.href = '/main?token=' + token;
       } else {
-        document.getElementById('error').innerText = 'Incorrect password 🚀';
+        document.getElementById('error').innerText = 'Incorrect password 🚀' + token;
       }
     }
   };
   xhttp.open('POST', '/login', true);
   xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  xhttp.send('password=' + encodeURIComponent(password));
+  xhttp.send('password=' + password + '&token=' + token);
 }
 </script>
 </head>
 <body>
 <h1>Login...🚀</h1>
 <p><input type="password" id="password" placeholder="Enter password"></p>
+<input type="hidden" id="token" name="token" value=")rawliteral" + String(token) + R"rawliteral(">
 <p><button onclick="sendLoginRequest()">Login</button></p>
 <p id="error"></p>
 </body>
 </html>
-)rawliteral";
+)rawliteral");  
+}
 
 void WebControl::initMainPage() {
   mainPage = String(R"rawliteral(
@@ -105,7 +109,6 @@ function toggleFont() {
 )rawliteral");
 }
 
-
 void WebControl::handleLEDOn() {
   server.send(200, "text/plain", "ON");
   VFD_enable(true);
@@ -150,11 +153,20 @@ void WebControl::handleTime() {
 }
 
 void WebControl::handleLoginPage() {
-  server.send_P(200, "text/html", loginPage);
+  String token = server.client().remoteIP().toString();
+  if (userTokens.find(token) != userTokens.end() && userTokens[token]) {
+    this->initMainPage();
+    server.send_P(200, "text/html", mainPage.c_str());
+  } else {
+    userTokens[token] = false; // 初始化为未登录状态
+    this->initLoginPage(token);
+    server.send_P(200, "text/html", loginPage.c_str());    
+  }
 }
 
 void WebControl::handleMainPage() {
-  if (isLoggedIn) {
+  String token = server.arg("token");
+  if (userTokens.find(token) != userTokens.end() && userTokens[token]) {
     // 初始化HTML页面
     this->initMainPage();
     server.send_P(200, "text/html", mainPage.c_str());
@@ -167,11 +179,11 @@ void WebControl::handleMainPage() {
 void WebControl::handleLogin() {
   if (server.method() == HTTP_POST) {
     String password = server.arg("password");
-    if (password == correctPassword) {
-      isLoggedIn = true;
+    String token = server.arg("token");
+    if (userTokens.find(token) != userTokens.end() && password == correctPassword) {
+      userTokens[token] = true; // 更新为已登录状态
       server.send(200, "text/plain", "success");
     } else {
-      isLoggedIn = false;
       server.send(200, "text/plain", "failure");
     }
   } else {
@@ -183,9 +195,6 @@ void WebControl::handleNotFound() {
   server.sendHeader("Location", String("http://") + apIP.toString(), true);
   server.send(302, "text/plain", "");
 }
-
-
-
 
 void WebControl::handleClient() {
   server.handleClient();
@@ -207,6 +216,7 @@ void WebControl::exitLowPowerMode() {
 
 void WebControl::checkWiFiAndSleep() {
   if (WiFi.softAPgetStationNum() == 0) {
+    userTokens.clear();  // 清空 userTokens map
     enterLowPowerMode();
   } else {
     exitLowPowerMode();
