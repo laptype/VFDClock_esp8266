@@ -11,6 +11,7 @@ FrameRefresh::TimePeriod displayPeriods[] = {
 };
 
 bool enable_display = true;
+WebControl webControl; // 创建WebControl对象
 
 void setup() {
 
@@ -31,7 +32,7 @@ void setup() {
   
   delay(1000);
   // 初始化Web
-  WebControl::setupServer();
+  webControl.setupServer();
   VFD_setBrightness(128); // 和VFD_init隔一段时间设置
 }
 
@@ -59,8 +60,6 @@ void loop() {
     enable_display = cur_enable_display;
   }
   clock_loop();
-  WebControl::dnsServer.processNextRequest();   // 重定向请求
-  WebControl::server.handleClient();
-  delay(20);
+  webControl.processRequests();
 
 }

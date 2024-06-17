@@ -4,21 +4,44 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <DNSServer.h>
+#include <TimeLib.h>
 
-#include <TimeLib.h> // Include the Time library for time functions
+class WebControl {
+public:
+    WebControl() : apIP(192, 168, 4, 1), server(80), correctPassword("123") {}
+    
+    void setupServer();
 
-namespace WebControl {
-  // 使用extern关键字声明服务器对象
-  extern DNSServer dnsServer;
-  extern ESP8266WebServer server;
-  extern bool hasSetTime;
-  // 函数声明
-  void handleRoot();
-  void handleLEDOn();
-  void handleLEDOff();
-  void handleBrightness();
-  void handleTime();
-  void setupServer();
-}
+    void processRequests();
 
-#endif // WEBCONTROL_H
+    static bool hasSetTime;
+
+private:
+    const byte DNS_PORT = 53;
+    IPAddress apIP;
+    DNSServer dnsServer;
+    ESP8266WebServer server;
+    const char* correctPassword;
+    bool isLoggedIn;  // 用于会话管理
+
+    
+    
+    void handleClient();
+    void checkWiFiAndSleep();
+    void processNextRequest();
+    void enterLowPowerMode();
+    void exitLowPowerMode();
+    void handleLoginPage();
+    void handleLogin();
+    void handleMainPage();
+    void handleLEDOn();
+    void handleLEDOff();
+    void handleBrightness();
+    void handleTime();
+    void handleNotFound();
+
+    static const char loginPage[];
+    static const char mainPage[];
+};
+
+#endif
