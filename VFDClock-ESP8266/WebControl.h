@@ -38,6 +38,7 @@ private:
     void handleLoginPage();
     void handleLogin();
     void handleMainPage();
+    void handleTimerPage();
     void handleLEDOn();
     void handleLEDOff();
     void handleBrightness();
@@ -46,9 +47,11 @@ private:
     void handleNotFound();
     void initMainPage();
     void initLoginPage(String token);
+    void initTimerPage();
 
     String loginPage;
     String mainPage; // mainPage作为String来处理
+    String timerPage;
 };
 
 #endif
