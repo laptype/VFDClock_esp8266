@@ -76,6 +76,7 @@ function sendRequest(path) {
   xhttp.send();
 }
 function updateBrightness(val) {
+  document.getElementById('brightness').innerHTML = val;
   sendRequest('/brightness?value=' + val);
 }
 function sendTime() {
@@ -100,7 +101,7 @@ function toggleFont() {
 <h1>VFD Control</h1>
 <p><button onclick="sendRequest('/on')">Turn On</button></p>
 <p><button onclick="sendRequest('/off')">Turn Off</button></p>
-<p>Brightness: <input type="range" min="0" max="255" value=")rawliteral" + String(brightness) + R"rawliteral(" onchange="updateBrightness(this.value)"></p>
+<p>Brightness: <span id="brightness">)rawliteral" + String(brightness) + R"rawliteral(</span><input type="range" min="0" max="255" value=")rawliteral" + String(brightness) + R"rawliteral(" onchange="updateBrightness(this.value)"></p>
 <p><button onclick="sendTime()">Set Current Time</button></p>
 <p><button id="fontButton" data-font-state=")rawliteral" + (isBold ? "bold" : "regular") + R"rawliteral(" onclick="toggleFont()">)rawliteral" + (isBold ? "Set Regular Font" : "Set Bold Font") + R"rawliteral(</button></p>
 <p id="status"></p>
