@@ -35,17 +35,16 @@ void WebControl::initMainPage() {
 
 void WebControl::handleLEDOn() {
   server.send(200, "text/plain", "ON");
-  VFD_enable(true);
   if (frameRefresh) {
-    frameRefresh->freshDisplay();
-    delay(20);
-    frameRefresh->freshDisplay();
+    frameRefresh->enableDisplay(true);
   }
 }
 
 void WebControl::handleLEDOff() {
   server.send(200, "text/plain", "OFF");
-  VFD_enable(false);
+  if (frameRefresh) {
+    frameRefresh->enableDisplay(false);
+  }
 }
 
 void WebControl::handleBrightness() {

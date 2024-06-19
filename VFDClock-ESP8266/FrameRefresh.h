@@ -4,6 +4,20 @@
 #include "VFDdriver.h"
 #include <TimeLib.h>
 
+struct NumberArray {
+    int numbers[6] = {0, 0, 0, 0, 0, 0};
+
+    NumberArray(const String format_time) { update(format_time.c_str()); }
+    NumberArray(int n) { for (int i = 0; i < 6; ++i) numbers[i] = n; }
+
+    void update(const char* format_time);
+    void update(int countdownHour, int countdownMinute, int countdownSecond);
+    
+    NumberArray& operator=(const NumberArray& other);
+    int& operator[](size_t index);
+    const int& operator[](size_t index) const;
+};
+
 class FrameRefresh {
 public:
     struct TimePeriod {
@@ -14,19 +28,17 @@ public:
     };
     FrameRefresh();
     void setFont(bool bold);
-    void FrameDisplayTime();
+    void FrameDisplayTime(int currentHour, int currentMinute, int currentSecond);
     bool display_time(const TimePeriod displayPeriods[], int numPeriods);
     void freshDisplay();
+    void enableDisplay(bool en);
 private:
-    void up_now_num(String format_time);
-    void up_last_num();
     void FrameRefreshFunc(unsigned char num, unsigned char mCnt1, unsigned char mCnt2, unsigned char x);
     void disPlayFont(int num, unsigned char x);
     void SecDispalyRefresh();
     bool isWithinTimePeriod(int hour, int minute, const TimePeriod& period);
-    void init_last_num();
-    int last_number[6] = {11, 11, 11, 11, 11, 11};
-    int now_number[6] = {0, 0, 0, 0, 0, 0};
+    NumberArray pre_number = NumberArray(11);
+    NumberArray cur_number = NumberArray(0); 
     unsigned char dispalyTemp[6][5];
     bool isBold;
     unsigned char (*currentNumber)[5];
