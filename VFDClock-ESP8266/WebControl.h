@@ -28,22 +28,32 @@ private:
 
     StateMachine* stateMachine; // Pointer to stateMachine
     std::map<String, bool> userTokens; // 存储token及其登录状态
-    
-    void handleClient();
-    void checkWiFiAndSleep();
-    void processNextRequest();
-    void enterLowPowerMode();
-    void exitLowPowerMode();
-    void handleLoginPage();
-    void handleLogin();
-    void handleMainPage();
-    void handleTimerPage();
+    /**
+     * main page
+     */
     void handleLEDOn();
     void handleLEDOff();
     void handleBrightness();
     void handleTime();
     void handleToggleFont();
+    /**
+     * login page
+     */
+    void handleLogin();
+
+    void handleClient();
+
+    void checkWiFiAndSleep();
+    void processNextRequest();
+    void enterLowPowerMode();
+    void exitLowPowerMode();
+
+    void handleLoginPage();
+    void handleMainPage();
+    void handleTimerPage();
+
     void handleNotFound();
+
     void initMainPage();
     void initLoginPage(String token);
     void initTimerPage();
