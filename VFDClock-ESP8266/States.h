@@ -1,12 +1,10 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "FrameRefresh.h"
-#include "WebControl.h"
-
 #define DISPLAY_STATE 0
 #define TIMER_STATE 1
 #define LOW_POWER_STATE 2
+#include "FrameRefresh.h"
 
 // 前向声明
 class StateMachine;
@@ -49,25 +47,6 @@ class LowPowerState : public State {
 public:
     void handle(StateMachine& stateMachine) override;
     void stateInit() override;
-};
-
-class StateMachine {
-private:
-    FrameRefresh* frame;
-    WebControl* webControl;
-    State* stateList[3] = {nullptr};
-    State* curState = nullptr;
-
-public:
-    StateMachine();
-    ~StateMachine();
-    void init();
-    void displayTime(int currentHour, int currentMinute, int currentSecond);
-    void setState(int stateId);
-    void running();
-    void enableDisplay(bool en);
-    void setBrightness(int brightness);
-    void setFont(bool bold);
 };
 
 #endif // STATE_H

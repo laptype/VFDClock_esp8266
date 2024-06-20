@@ -6,7 +6,7 @@
 #include <DNSServer.h>
 #include <TimeLib.h>
 #include <map> // 使用C++标准库的map进行token管理
-#include "FrameRefresh.h"
+
 class StateMachine; // Forward declaration
 class WebControl {
 public:
