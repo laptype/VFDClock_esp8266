@@ -27,24 +27,26 @@ public:
       int endMinute;
     };
     FrameRefresh();
-    void setFont(bool bold);
-    void FrameDisplayTime(int currentHour, int currentMinute, int currentSecond);
-    bool display_time(const TimePeriod displayPeriods[], int numPeriods);
+    void displayFrameTime(int currentHour, int currentMinute, int currentSecond);
     void freshDisplay();
     void enableDisplay(bool en);
+
+    void setFont(bool bold);
+    void setBrightness(int brightness);
+    static bool isDisplay(const TimePeriod displayPeriods[], int numPeriods);
 private:
     void FrameRefreshFunc(unsigned char num, unsigned char mCnt1, unsigned char mCnt2, unsigned char x);
     void disPlayFont(int num, unsigned char x);
     void SecDispalyRefresh();
-    bool isWithinTimePeriod(int hour, int minute, const TimePeriod& period);
-    NumberArray pre_number = NumberArray(11);
-    NumberArray cur_number = NumberArray(0); 
-    unsigned char dispalyTemp[6][5];
-    bool isBold;
-    unsigned char (*currentNumber)[5];
 
-    static unsigned char number[12][5];
-    static unsigned char numberBold[12][5];
+    NumberArray pre_number = NumberArray(11);
+    NumberArray cur_number = NumberArray(0);
+
+    unsigned char (*currentNumberFont)[5];
+
+    static unsigned char numberFontNormal[12][5];
+    static unsigned char numberFontBold[12][5];
+    static bool isWithinTimePeriod(int hour, int minute, const TimePeriod& period);
 };
 
 #endif

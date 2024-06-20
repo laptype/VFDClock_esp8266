@@ -1,5 +1,5 @@
 #include "WebControl.h"
-#include "VFDdriver.h"
+#include "Manager.h"
 
 bool WebControl::hasSetTime = false;
 
@@ -35,30 +35,33 @@ void WebControl::initMainPage() {
 
 void WebControl::handleLEDOn() {
   server.send(200, "text/plain", "ON");
-  if (frameRefresh) {
-    frameRefresh->enableDisplay(true);
+  if (stateMachine) {
+//      frameDisplay
+      stateMachine->enableDisplay(true);
   }
 }
 
 void WebControl::handleLEDOff() {
   server.send(200, "text/plain", "OFF");
-  if (frameRefresh) {
-    frameRefresh->enableDisplay(false);
+  if (stateMachine) {
+      stateMachine->enableDisplay(false);
   }
 }
 
 void WebControl::handleBrightness() {
   String brightnessValue = server.arg("value");
   brightness = brightnessValue.toInt();
-  VFD_setBrightness(brightness);
+  if (stateMachine) {
+      stateMachine->setBrightness(brightness);
+  }
   server.send(200, "text/plain", "brightness set to " + brightnessValue);
 }
 
 void WebControl::handleToggleFont() {
   isBold = !isBold;
   server.send(200, "text/plain", isBold ? "Bold font set" : "Regular font set");
-  if (frameRefresh) {
-    frameRefresh->setFont(isBold);
+  if (stateMachine) {
+      stateMachine->setFont(isBold);
   }
   
 }
@@ -159,9 +162,7 @@ void WebControl::processRequests() {
     processNextRequest(); // 处理重定向请求
     handleClient();
   }
-
   delay(20);
-
   checkWiFiAndSleep();
 }
 

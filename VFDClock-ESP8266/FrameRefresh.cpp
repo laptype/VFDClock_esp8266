@@ -1,5 +1,5 @@
 #include "FrameRefresh.h"
-unsigned char FrameRefresh::number[12][5] = {
+unsigned char FrameRefresh::numberFontNormal[12][5] = {
     {0x3E, 0x51, 0x49, 0x45, 0x3E}, // 0
     {0x00, 0x42, 0x7F, 0x40, 0x00}, // 1
     {0x62, 0x51, 0x49, 0x49, 0x46}, // 2
@@ -14,7 +14,7 @@ unsigned char FrameRefresh::number[12][5] = {
     {0x00, 0x00, 0x00, 0x00, 0x00}  // null
 };
 
-unsigned char FrameRefresh::numberBold[12][5] = {
+unsigned char FrameRefresh::numberFontBold[12][5] = {
     {0x7F, 0x7F, 0x41, 0x7F, 0x7F}, // 0
     {0x00, 0x7F, 0x7F, 0x7F, 0x00}, // 1
     {0x79, 0x79, 0x69, 0x6F, 0x6F}, // 2
@@ -29,14 +29,13 @@ unsigned char FrameRefresh::numberBold[12][5] = {
     {0x00, 0x00, 0x00, 0x00, 0x00}  // null
 };
 
-FrameRefresh::FrameRefresh() : isBold(false), currentNumber(number) {}
+FrameRefresh::FrameRefresh() : currentNumberFont(numberFontNormal) {}
 
 void FrameRefresh::setFont(bool bold) {
-    isBold = bold;
-    if (isBold) {
-        currentNumber = numberBold;
+    if (bold) {
+        currentNumberFont = numberFontBold;
     } else {
-        currentNumber = number;
+        currentNumberFont = numberFontNormal;
     }
     freshDisplay();
 }
@@ -83,16 +82,17 @@ const int& NumberArray::operator[](size_t index) const {
 }
 
 void FrameRefresh::FrameRefreshFunc(unsigned char num, unsigned char mCnt1, unsigned char mCnt2, unsigned char x) {
-    dispalyTemp[num][0] = (currentNumber[pre_number[num]][0] << mCnt1) | (currentNumber[cur_number[num]][0] >> mCnt2);
-    dispalyTemp[num][1] = (currentNumber[pre_number[num]][1] << mCnt1) | (currentNumber[cur_number[num]][1] >> mCnt2);
-    dispalyTemp[num][2] = (currentNumber[pre_number[num]][2] << mCnt1) | (currentNumber[cur_number[num]][2] >> mCnt2);
-    dispalyTemp[num][3] = (currentNumber[pre_number[num]][3] << mCnt1) | (currentNumber[cur_number[num]][3] >> mCnt2);
-    dispalyTemp[num][4] = (currentNumber[pre_number[num]][4] << mCnt1) | (currentNumber[cur_number[num]][4] >> mCnt2);
-    VFD_WriteUserFont(x, x, dispalyTemp[num]);
+    unsigned char tmpDisplay[5];
+    tmpDisplay[0] = (currentNumberFont[pre_number[num]][0] << mCnt1) | (currentNumberFont[cur_number[num]][0] >> mCnt2);
+    tmpDisplay[1] = (currentNumberFont[pre_number[num]][1] << mCnt1) | (currentNumberFont[cur_number[num]][1] >> mCnt2);
+    tmpDisplay[2] = (currentNumberFont[pre_number[num]][2] << mCnt1) | (currentNumberFont[cur_number[num]][2] >> mCnt2);
+    tmpDisplay[3] = (currentNumberFont[pre_number[num]][3] << mCnt1) | (currentNumberFont[cur_number[num]][3] >> mCnt2);
+    tmpDisplay[4] = (currentNumberFont[pre_number[num]][4] << mCnt1) | (currentNumberFont[cur_number[num]][4] >> mCnt2);
+    VFD_WriteUserFont(x, x, tmpDisplay);
 }
 
 void FrameRefresh::disPlayFont(int num, unsigned char x) {
-    VFD_WriteUserFont(x, x, currentNumber[num]);
+    VFD_WriteUserFont(x, x, currentNumberFont[num]);
 }
 
 void FrameRefresh::freshDisplay() {
@@ -119,7 +119,7 @@ void FrameRefresh::SecDispalyRefresh() {
     }
 }
 
-void FrameRefresh::FrameDisplayTime(int currentHour, int currentMinute, int currentSecond) {
+void FrameRefresh::displayFrameTime(int currentHour, int currentMinute, int currentSecond) {
     // char timeBuffer[9];
     // sprintf(timeBuffer, "%02d:%02d:%02d", currentHour, currentMinute, currentSecond);
     cur_number.update(currentHour, currentMinute, currentSecond); 
@@ -141,7 +141,7 @@ bool FrameRefresh::isWithinTimePeriod(int hour, int minute, const TimePeriod& pe
     return true;
 }
 
-bool FrameRefresh::display_time(const TimePeriod displayPeriods[], int numPeriods) {
+bool FrameRefresh::isDisplay(const TimePeriod displayPeriods[], int numPeriods) {
     int currentHour = hour();
     int currentMinute = minute();
 
@@ -153,8 +153,8 @@ bool FrameRefresh::display_time(const TimePeriod displayPeriods[], int numPeriod
     return false;    
 }
 
-void FrameRefresh::enableDisplay(bool en) {
-  if (en) {
+void FrameRefresh::enableDisplay(bool enable) {
+  if (enable) {
     VFD_enable(true);
     this->freshDisplay();
     delay(20);
@@ -162,4 +162,8 @@ void FrameRefresh::enableDisplay(bool en) {
   } else {
     VFD_enable(false);    
   }
+}
+
+void FrameRefresh::setBrightness(int brightness) {
+    VFD_setBrightness(brightness);
 }

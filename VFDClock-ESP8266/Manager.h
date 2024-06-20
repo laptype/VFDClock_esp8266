@@ -1,6 +1,12 @@
 #ifndef STATE_H
 #define STATE_H
-#include <memory>
+
+#include "FrameRefresh.h"
+#include "WebControl.h"
+
+#define DISPLAY_STATE 0
+#define TIMER_STATE 1
+#define LOW_POWER_STATE 2
 
 // 前向声明
 class StateMachine;
@@ -9,30 +15,59 @@ class State {
 public:
     virtual ~State() {}
     virtual void handle(StateMachine& stateMachine) = 0;
+    virtual void stateInit() = 0;
 };
 
-class NormalState : public State {
+class DisplayTimeState : public State {
+private:
+    uint32_t time_out = 0;
+    bool enable_display = true;
+    FrameRefresh::TimePeriod displayPeriods[3] = {
+            {10, 0, 12, 0},
+            {13, 0, 17, 30},
+            {18, 0, 23, 0},
+    };
+    void display(StateMachine &stateMachine);
 public:
     void handle(StateMachine& stateMachine) override;
+    void stateInit() override;
 };
 
 class TimerState : public State {
+private:
+    uint32_t time_out = 0;
+    int countdownHour=1;
+    int countdownMinute=0;
+    int countdownSecond=0;
+    void display(StateMachine &stateMachine);
 public:
     void handle(StateMachine& stateMachine) override;
+    void stateInit() override;
 };
 
 class LowPowerState : public State {
 public:
     void handle(StateMachine& stateMachine) override;
+    void stateInit() override;
 };
 
 class StateMachine {
 private:
-    std::shared_ptr<State> currentState;
+    FrameRefresh* frame;
+    WebControl* webControl;
+    State* stateList[3] = {nullptr};
+    State* curState = nullptr;
+
 public:
-    StateMachine(std::shared_ptr<State> state);
-    void setState(std::shared_ptr<State> state);
-    void request();
+    StateMachine();
+    ~StateMachine();
+    void init();
+    void displayTime(int currentHour, int currentMinute, int currentSecond);
+    void setState(int stateId);
+    void running();
+    void enableDisplay(bool en);
+    void setBrightness(int brightness);
+    void setFont(bool bold);
 };
 
 #endif // STATE_H

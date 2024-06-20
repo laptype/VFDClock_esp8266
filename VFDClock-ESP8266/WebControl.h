@@ -7,10 +7,10 @@
 #include <TimeLib.h>
 #include <map> // 使用C++标准库的map进行token管理
 #include "FrameRefresh.h"
-
+class StateMachine; // Forward declaration
 class WebControl {
 public:
-    WebControl(FrameRefresh* frameRefresh) : apIP(192, 168, 4, 1), server(80), correctPassword("123"), frameRefresh(frameRefresh) {}
+    WebControl(StateMachine* stateMachine) : apIP(192, 168, 4, 1), server(80), correctPassword("123"), stateMachine(stateMachine) {}
     
     void setupServer();
 
@@ -25,9 +25,8 @@ private:
     DNSServer dnsServer;
     ESP8266WebServer server;
     const char* correctPassword;
-    bool isLoggedIn;  // 用于会话管理
 
-    FrameRefresh* frameRefresh; // Pointer to FrameRefresh
+    StateMachine* stateMachine; // Pointer to stateMachine
     std::map<String, bool> userTokens; // 存储token及其登录状态
     
     void handleClient();
