@@ -29,7 +29,11 @@ StateMachine::~StateMachine() {
 }
 
 void StateMachine::displayTime(int currentHour, int currentMinute, int currentSecond) {
-    frame->displayFrameTime(currentHour, currentMinute, currentSecond);
+    frame->displayFrameTime(currentHour, currentMinute, currentSecond, 15, 0);
+}
+
+void StateMachine::displayTimeMs(int currentMinute, int currentSecond, int currentMill) {
+    frame->displayFrameTime(currentMinute, currentSecond, currentMill, 7, 000001);
 }
 
 void StateMachine::running() {

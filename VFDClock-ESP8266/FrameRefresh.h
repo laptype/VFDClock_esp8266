@@ -27,7 +27,7 @@ public:
       int endMinute;
     };
     FrameRefresh();
-    void displayFrameTime(int currentHour, int currentMinute, int currentSecond);
+    void displayFrameTime(int currentHour, int currentMinute, int currentSecond, int delayTime, int fresh);
     void freshDisplay();
     void enableDisplay(bool enable);
     void reset_number();
@@ -37,7 +37,7 @@ public:
 private:
     void FrameRefreshFunc(unsigned char num, unsigned char mCnt1, unsigned char mCnt2, unsigned char x);
     void disPlayFont(int num, unsigned char x);
-    void SecDisplayRefresh(int SecDisplayRefresh);
+    void SecDisplayRefresh(int delayTime, int fresh);
 
     NumberArray pre_number = NumberArray(11);
     NumberArray cur_number = NumberArray(0);

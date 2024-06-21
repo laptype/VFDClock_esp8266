@@ -39,8 +39,11 @@ private:
     int countdownHour=1;
     int countdownMinute=0;
     int countdownSecond=0;
+    int countdownMillis=0;
     void display(StateMachine &stateMachine);
+    void displayMillis(StateMachine &stateMachine);
 public:
+    bool isMs = false;
     void stateInit() override;
     void handle(StateMachine& stateMachine) override;
     void initTime(int minute, int second, StateMachine *stateMachine, bool enable, bool start);
@@ -64,6 +67,7 @@ public:
     ~StateMachine();
     void init();
     void displayTime(int currentHour, int currentMinute, int currentSecond);
+    void displayTimeMs(int currentMinute, int currentSecond, int currentMill);
     void setState(int stateId);
     void running();
     void enableDisplay(bool enable);

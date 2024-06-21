@@ -112,25 +112,23 @@ void FrameRefresh::reset_number() {
     pre_number.update(0, 0, 0);
 }
 
-void FrameRefresh::SecDisplayRefresh(int delayTime) {
+void FrameRefresh::SecDisplayRefresh(int delayTime, int fresh) {
     for (unsigned char i = 1; i <= 7; ++i) {
-        if (cur_number[0] != pre_number[0]) FrameRefreshFunc(0, i, 7 - i, 0);
-        if (cur_number[1] != pre_number[1]) FrameRefreshFunc(1, i, 7 - i, 1);
-        if (cur_number[2] != pre_number[2]) FrameRefreshFunc(2, i, 7 - i, 3);
-        if (cur_number[3] != pre_number[3]) FrameRefreshFunc(3, i, 7 - i, 4);
-        if (cur_number[4] != pre_number[4]) FrameRefreshFunc(4, i, 7 - i, 6);
-        if (cur_number[5] != pre_number[5]) FrameRefreshFunc(5, i, 7 - i, 7);
+
+        if (cur_number[0] != pre_number[0] || (fresh >> 5) & 1) FrameRefreshFunc(0, i, 7 - i, 0);
+        if (cur_number[1] != pre_number[1] || (fresh >> 4) & 1) FrameRefreshFunc(1, i, 7 - i, 1);
+        if (cur_number[2] != pre_number[2] || (fresh >> 3) & 1) FrameRefreshFunc(2, i, 7 - i, 3);
+        if (cur_number[3] != pre_number[3] || (fresh >> 2) & 1) FrameRefreshFunc(3, i, 7 - i, 4);
+        if (cur_number[4] != pre_number[4] || (fresh >> 1) & 1) FrameRefreshFunc(4, i, 7 - i, 6);
+        if (cur_number[5] != pre_number[5] || (fresh >> 0) & 1) FrameRefreshFunc(5, i, 7 - i, 7);
         delay(delayTime);
     }
 }
 
-void FrameRefresh::displayFrameTime(int currentHour, int currentMinute, int currentSecond) {
-    // char timeBuffer[9];
-    // sprintf(timeBuffer, "%02d:%02d:%02d", currentHour, currentMinute, currentSecond);
+void FrameRefresh::displayFrameTime(int currentHour, int currentMinute, int currentSecond, int delayTime, int fresh) {
     cur_number.update(currentHour, currentMinute, currentSecond);
-    SecDisplayRefresh(15);
+    SecDisplayRefresh(delayTime, fresh);
     pre_number = cur_number;
-    // VFD_WriteStr(0, timeBuffer);    
 }
 
 bool FrameRefresh::isWithinTimePeriod(int hour, int minute, const TimePeriod& period) {
@@ -172,3 +170,5 @@ void FrameRefresh::enableDisplay(bool enable) {
 void FrameRefresh::setBrightness(int brightness) {
     VFD_setBrightness(brightness);
 }
+
+

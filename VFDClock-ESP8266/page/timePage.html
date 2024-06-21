@@ -63,6 +63,9 @@
         </svg>
         <div class="time-display" id="time-display">00:00</div>
     </div>
+    <label>
+        <input type="checkbox" id="toggle-switch"> Toggle Switch
+    </label>
     <button class="start-button" id="start-button">Start Countdown</button>
     <button class="start-button" id="stop-button">Stop Countdown</button>
 </div>
@@ -72,6 +75,7 @@
     const timeDisplay = document.getElementById('time-display');
     const startButton = document.getElementById('start-button');
     const stopButton = document.getElementById('stop-button');
+    const checkBox = document.getElementById('toggle-switch');
     const radius = progressCircle.r.baseVal.value;
     const circumference = 2 * Math.PI * radius;
     let currentTime = 0.1;
@@ -122,7 +126,7 @@
         if (countdownStarted) return;
         document.removeEventListener('mousemove', handleDrag);
         if (isTouch) {
-            sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=2'+'&t='+String(Date.now()).slice(-9));
+            sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=2'+'&t='+String(Date.now()).slice(-9)+'&c='+(checkBox.checked ? 1 : 0));
             isTouch = false;
         }
     });
@@ -135,7 +139,7 @@
         if (countdownStarted) return;
         document.removeEventListener('touchmove', handleDrag);
         if (isTouch) {
-            sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=2'+'&t='+String(Date.now()).slice(-9));
+            sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=2'+'&t='+String(Date.now()).slice(-9)+'&c='+(checkBox.checked ? 1 : 0));
             isTouch = false;
         }
     });
