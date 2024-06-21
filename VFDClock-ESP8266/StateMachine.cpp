@@ -1,4 +1,4 @@
-#include "States.h"
+#include "State.h"
 #include <utility>
 StateMachine::StateMachine() {
     frame = new FrameRefresh();

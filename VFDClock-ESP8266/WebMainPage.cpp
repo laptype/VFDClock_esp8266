@@ -1,5 +1,5 @@
 #include "WebControl.h"
-#include "States.h"
+#include "State.h"
 
 void WebControl::initMainPage() {
     mainPage = String(R"rawliteral(

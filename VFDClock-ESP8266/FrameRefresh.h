@@ -37,7 +37,7 @@ public:
 private:
     void FrameRefreshFunc(unsigned char num, unsigned char mCnt1, unsigned char mCnt2, unsigned char x);
     void disPlayFont(int num, unsigned char x);
-    void SecDisplayRefresh();
+    void SecDisplayRefresh(int SecDisplayRefresh);
 
     NumberArray pre_number = NumberArray(11);
     NumberArray cur_number = NumberArray(0);
