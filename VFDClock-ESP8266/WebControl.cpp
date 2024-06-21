@@ -56,6 +56,7 @@ void WebControl::checkWiFiAndSleep() {
   if (WiFi.softAPgetStationNum() == 0) {
     // clearUnloggedTokens();
     userTokens.clear();  // 清空 userTokens map
+    preTimeStamp = 0;    // 重置
     enterLowPowerMode();
   } else {
     exitLowPowerMode();

@@ -3,34 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        Time Progress Bar
-    </title>
+    <title>Time Progress Bar</title>
     <style>
-        body,.progress-circle-container{display:flex;justify-content:center;align-items:center;height:100vh;margin:0;flex-direction:column;font-family:Arial,sans-serif}.progress-circle{width:200px;height:200px;position:relative}.progress-circle
-                                                                                                                                                                                                                                    svg{width:100%;height:100%;transform:rotate(-90deg)}.progress-circle circle{fill:none;stroke-width:10}.bg{stroke:#f3f3f3}.progress{stroke:#76c7c0;stroke-linecap:round}.time-display{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px}.start-button{margin-top:20px;padding:10px
-        20px;cursor:pointer;background-color:#76c7c0;border:none;color:white;border-radius:5px}
+        body,.progress-circle-container {
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            margin:0;
+            flex-direction:column;
+            font-family:Arial,sans-serif
+        }
+        .progress-circle {
+            width:300px;
+            height:300px;
+            position:relative
+        }
+        .progress-circle svg {
+            width:100%;
+            height:100%;
+            transform:rotate(-90deg)
+        }
+        .progress-circle circle {
+            fill:none;
+            stroke-width:25
+        }
+        .bg {
+            stroke:#f3f3f3
+        }
+        .progress {
+            stroke:#76c7c0;
+            stroke-linecap:round
+        }
+        .time-display {
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            font-size:30px
+        }
+        .start-button {
+            margin:15px;
+            padding:15px 25px;
+            cursor:pointer;
+            background-color:#76c7c0;
+            border:none;
+            color:white;
+            border-radius:10px;
+            font-size:20px
+        }
     </style>
 </head>
 <body ontouchmove="event.preventDefault()">
 <div class="progress-circle-container">
     <div class="progress-circle" id="progress-circle">
         <svg>
-            <circle cx="100" cy="100" r="90" class="bg">
-            </circle>
-            <circle cx="100" cy="100" r="90" class="progress">
-            </circle>
+            <circle cx="150" cy="150" r="100" class="bg"></circle>
+            <circle cx="150" cy="150" r="100" class="progress"></circle>
         </svg>
-        <div class="time-display" id="time-display">
-            00:00
-        </div>
+        <div class="time-display" id="time-display">00:00</div>
     </div>
-    <button class="start-button" id="start-button">
-        Start Countdown
-    </button>
-    <button class="start-button" id="stop-button">
-        Stop Countdown
-    </button>
+    <button class="start-button" id="start-button">Start Countdown</button>
+    <button class="start-button" id="stop-button">Stop Countdown</button>
 </div>
 <script>
     const maxTime = 120;
@@ -88,7 +122,7 @@
         if (countdownStarted) return;
         document.removeEventListener('mousemove', handleDrag);
         if (isTouch) {
-            sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=2'+'&t='+String(Date.now()).slice(-7));
+            sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=2'+'&t='+String(Date.now()).slice(-9));
             isTouch = false;
         }
     });
@@ -101,7 +135,7 @@
         if (countdownStarted) return;
         document.removeEventListener('touchmove', handleDrag);
         if (isTouch) {
-            sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=2'+'&t='+String(Date.now()).slice(-7));
+            sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=2'+'&t='+String(Date.now()).slice(-9));
             isTouch = false;
         }
     });
@@ -109,7 +143,7 @@
     function startCountdown() {
         if (countdownStarted) return;
         countdownStarted = true;
-        sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=1'+'&t='+String(Date.now()).slice(-7));
+        sendRequest('/timerSet?m=' + String(Math.floor(currentTime)) + '&r=1'+'&t='+String(Date.now()).slice(-9));
         if (countdownInterval) clearInterval(countdownInterval);
         countdownInterval = setInterval(() => {
             currentTime -= 1 / 60;
@@ -128,7 +162,7 @@
         if (!countdownStarted) return;
         countdownStarted = false;
         currentTime = 0;
-        sendRequest('/timerSet?m=0&r=0'+'&t='+String(Date.now()).slice(-7));
+        sendRequest('/timerSet?m=0&r=0'+'&t='+String(Date.now()).slice(-9));
         setProgress(0);
     });
     setProgress(currentTime);
