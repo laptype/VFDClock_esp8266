@@ -28,6 +28,9 @@ private:
 
     StateMachine* stateMachine; // Pointer to stateMachine
     std::map<String, bool> userTokens; // 存储token及其登录状态
+    bool isTimerRunning = false;
+    int TimerMinute = 0;
+    int preTimeStamp = 0;
     /**
      * main page
      */
@@ -40,6 +43,8 @@ private:
      * login page
      */
     void handleLogin();
+
+    void handleTimeSet();
 
     void handleClient();
 

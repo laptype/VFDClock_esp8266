@@ -27,10 +27,6 @@ void WebControl::handleMainPage() {
   }
 }
 
-void WebControl::handleTimerPage() {
-  this->initTimerPage();
-  server.send_P(200, "text/html", timerPage.c_str());
-}
 
 
 void WebControl::handleNotFound() {
@@ -96,6 +92,7 @@ void WebControl::setupServer() {
   server.on("/off", [this]() { handleLEDOff(); });
   server.on("/brightness", [this]() { handleBrightness(); });
   server.on("/time", [this]() { handleTime(); });
+  server.on("/timerSet", [this]() { handleTimeSet(); });
   server.on("/toggleFont", [this]() { handleToggleFont(); });
   server.onNotFound([this]() { handleNotFound(); });
 

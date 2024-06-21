@@ -1,9 +1,5 @@
-//
-// Created by 12053 on 2024/6/20.
-//
-
 #include "States.h"
-
+#include <utility>
 StateMachine::StateMachine() {
     frame = new FrameRefresh();
     webControl = new WebControl(this); // 创建WebControl对象
@@ -44,7 +40,12 @@ void StateMachine::running() {
 }
 
 void StateMachine::setState(int stateId) {
+    if (curStateId == stateId) return;
     curState = stateList[stateId];
+    if (curState) {
+        curState->stateInit();
+        curStateId = stateId;
+    }
 }
 
 void StateMachine::enableDisplay(bool enable) {
@@ -57,4 +58,8 @@ void StateMachine::setBrightness(int brightness) {
 
 void StateMachine::setFont(bool bold) {
     frame->setFont(bold);
+}
+
+void StateMachine::resetFrame() {
+    frame->reset_number();
 }

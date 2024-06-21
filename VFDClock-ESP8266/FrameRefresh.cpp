@@ -107,7 +107,12 @@ void FrameRefresh::freshDisplay() {
   delay(10);
 }
 
-void FrameRefresh::SecDispalyRefresh() {
+void FrameRefresh::reset_number() {
+    cur_number.update(0, 0, 0);
+    pre_number.update(0, 0, 0);
+}
+
+void FrameRefresh::SecDisplayRefresh() {
     for (unsigned char i = 1; i <= 7; ++i) {
         if (cur_number[0] != pre_number[0]) FrameRefreshFunc(0, i, 7 - i, 0);
         if (cur_number[1] != pre_number[1]) FrameRefreshFunc(1, i, 7 - i, 1);
@@ -122,8 +127,8 @@ void FrameRefresh::SecDispalyRefresh() {
 void FrameRefresh::displayFrameTime(int currentHour, int currentMinute, int currentSecond) {
     // char timeBuffer[9];
     // sprintf(timeBuffer, "%02d:%02d:%02d", currentHour, currentMinute, currentSecond);
-    cur_number.update(currentHour, currentMinute, currentSecond); 
-    SecDispalyRefresh();
+    cur_number.update(currentHour, currentMinute, currentSecond);
+    SecDisplayRefresh();
     pre_number = cur_number;
     // VFD_WriteStr(0, timeBuffer);    
 }

@@ -29,15 +29,15 @@ public:
     FrameRefresh();
     void displayFrameTime(int currentHour, int currentMinute, int currentSecond);
     void freshDisplay();
-    void enableDisplay(bool en);
-
+    void enableDisplay(bool enable);
+    void reset_number();
     void setFont(bool bold);
     void setBrightness(int brightness);
     static bool isDisplay(const TimePeriod displayPeriods[], int numPeriods);
 private:
     void FrameRefreshFunc(unsigned char num, unsigned char mCnt1, unsigned char mCnt2, unsigned char x);
     void disPlayFont(int num, unsigned char x);
-    void SecDispalyRefresh();
+    void SecDisplayRefresh();
 
     NumberArray pre_number = NumberArray(11);
     NumberArray cur_number = NumberArray(0);
