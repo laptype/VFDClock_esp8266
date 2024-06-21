@@ -29,6 +29,8 @@ void TimerState::display(StateMachine &stateMachine) {
 }
 
 void TimerState::handle(StateMachine &stateMachine) {
+    // isRun: 计时器是否工作
+    // isFinish：是否完成计时
     if (isRun && !isFinish) {
         display(stateMachine);
     } else if (isRun && isFinish) {
@@ -44,6 +46,7 @@ void TimerState::stateInit() {
 }
 
 void TimerState::initTime(int minute, int second, StateMachine* stateMachine, bool enable, bool start) {
+    // start == false 表示不开始计时，isRun = false
     this->isRun = (enable && start);
     if (!enable) {
         stateMachine->displayTime(0, 0, 0);

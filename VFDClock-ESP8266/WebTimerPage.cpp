@@ -14,10 +14,12 @@ void WebControl::handleTimerPage() {
 
 
 void WebControl::handleTimeSet() {
+    // 获取HTTP请求中的时间戳参数并转换为整数
     String timeStampStr = server.arg("t");
     int curTimeStamp = timeStampStr.toInt();
+    // 如果当前时间戳小于等于上一次的时间戳，则直接返回，过滤掉重复请求
     if (curTimeStamp <= preTimeStamp) return;
-
+    // 更新时间戳
     preTimeStamp = curTimeStamp;
 
     String minuteStr = server.arg("m");
@@ -25,18 +27,24 @@ void WebControl::handleTimeSet() {
 
     int minute = minuteStr.toInt();
     int runId = runStr.toInt();
-
+    // 如果运行ID为2，表示定时器设置请求
     if (runId == 2) {
+        // 如果分钟数未变化，防止重复点击
         if (minute == TimerMinute) return;
+        // 更新定时器分钟数，并重置定时器运行状态
         TimerMinute = minute;
         isTimerRunning = false;
+        // 设置状态机状态为定时器状态
         stateMachine->setState(TIMER_STATE);
+        // 初始化定时器状态
         if (TimerState* timerState = static_cast<TimerState*>(stateMachine->curState)) {
             timerState->initTime(minute, 0, stateMachine, true, false);
         }
         return;
     }
+    // 判断是否运行，运行ID为1表示运行，其他表示停止
     bool isRun = (runId == 1);
+    // 如果定时器当前的运行状态与请求中的状态相同，则直接返回
     if (isTimerRunning == isRun) return;
     isTimerRunning = isRun;
 
