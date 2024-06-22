@@ -4,6 +4,8 @@
 #define DISPLAY_STATE 0
 #define TIMER_STATE 1
 #define LOW_POWER_STATE 2
+#define SLEEP_STATE 3
+#define TOTAL_STATE_NUM 4
 #include "FrameRefresh.h"
 #include "WebControl.h"
 // 前向声明
@@ -59,7 +61,7 @@ class StateMachine {
 private:
     FrameRefresh* frame;
     WebControl* webControl;
-    State* stateList[3] = {nullptr};
+    State* stateList[TOTAL_STATE_NUM] = {nullptr};
 public:
     State* curState = nullptr;
     int curStateId = -1;

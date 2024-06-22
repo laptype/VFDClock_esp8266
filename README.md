@@ -1,101 +1,92 @@
 # VFDClock_esp8266🚀
 
-大多数现有的 ESP8266 VFD 时钟项目都依赖于连接到 WiFi 网络以自动更新时间，并且通常缺乏对 VFD 显示的控制功能，如开关和亮度调节。由于工位没有直接连接到可用的 WiFi 网络，我自己实现了通过手机连接 ESP8266 的 AP（Access Point），从而自动更新 ESP8266 的时间，并增加了对 VFD 时钟显示和控制的功能。
+Most existing ESP8266 VFD clock projects rely on connecting to a WiFi network to automatically update the time and often lack control features for the VFD display, such as switching and brightness adjustment. Since my workspace doesn't have direct access to an available WiFi network, I implemented a solution where the ESP8266 creates an AP (Access Point) that connects to a phone, automatically updates the ESP8266's time, and adds control features for the VFD clock display.
 
-## 项目功能 🎛️
+<img src="img/README_img/timer.gif" alt="timer" style="zoom: 50%;" />
 
-1. **无需外部 WiFi**：
-   - 📶 ESP8266 作为 WiFi 热点运行，无需依赖外部 WiFi 网络。
-   - 📱 用户通过手机或其他设备连接到 ESP8266 提供的 AP。
-2. **自动时间更新 ⏰**：
-   - 🔄 在用户连接到 ESP8266 的 AP 后，通过手机浏览器访问设备，设置当前时间，ESP8266 会自动更新其系统时间。
-3. **VFD 显示控制 💡**：
-   - **开关控制**：用户可以通过网页界面开启或关闭 VFD 显示。
-   - **亮度调节**：提供滑动条，用户可以通过网页界面实时调节 VFD 显示的亮度。
-   - **滚动更新动画**：实现时间滚动显示动画，提升视觉效果。
-   - **字体切换**：用户可以在两种不同的字体之间切换，提升显示的多样性和个性化。
-4. **低功耗模式 💤**：
-   - 🔋 当没有设备连接到 ESP8266 提供的 WiFi 网络时，设备将自动进入浅睡眠模式以节省电能。
-   - 🔌 仅在没有进入浅睡眠模式时处理客户端请求，确保高效的电能管理。
-5. 用户IP地址识别：
-   - 🌐 每个用户根据其连接设备的IP地址生成唯一的token，用于单独判断每个用户的登录状态。
-   - 🔑 用户登录成功后，在短期内无需再次登录，提升了用户体验。
+## Project Features 🎛️
 
-## 技术实现 🛠️
+1. **No External WiFi Required**:
+   - 📶 The ESP8266 operates as a WiFi hotspot, not requiring an external WiFi network.
+   - 📱 Users connect to the ESP8266's AP using their phone or other devices.
 
-1. **ESP8266 作为 AP**：
-   - 📡 ESP8266 设置为开放的 WiFi 热点，用户无需密码即可连接。
-   - 🔗 使用 `WiFi.softAP` 函数配置 AP 模式，并通过 `DNSServer` 劫持所有域名请求到 ESP8266 的 IP 地址。
-2. **网页控制界面 🌐**：
-   - 📄 内置简洁的 HTML/CSS/JavaScript 页面，通过 `ESP8266WebServer` 提供。
-   - 🔐 网页包括登录界面和主控制界面。用户在登录界面输入密码，验证成功后进入主界面。
-   - 🎛️ 主界面包括 VFD 开关按钮、亮度调节滑动条、字体切换按钮以及设置当前时间的按钮。
-3. **时间同步 📅**：
-   - ⏳ 用户设置当前时间后，通过 JavaScript 发送请求到 ESP8266，ESP8266 解析时间并更新其系统时间。
-4. **安全性 🔒**：
-   - 🔑 提供简单的登录机制，用户需要输入密码才能访问控制界面，保证了设备的使用安全性。
-5. **滚动显示时间动画 🎞️**：
-   - 🌀 实现时间滚动更新动画，提升视觉效果和用户体验。
-6. **低功耗模式管理**：
-   - 🌙 设备在检测到没有连接设备时，自动进入浅睡眠模式。
-   - 🛌 在浅睡眠模式下减少电能消耗，只有在唤醒时处理必要的网络请求。
-7. **字体切换**：
-   - ✒️ 实现字体切换功能，用户可以通过网页界面选择两种不同的字体风格，增加了显示的多样性。
-8. 用户IP地址识别：
-   - 🌐 通过`server.client().remoteIP().toString()`方法获取用户的IP地址，并根据IP地址生成唯一的token。
-   - 🛡️ 每个用户连接后，IP地址作为token用于识别用户，记录其登录状态，短期内无需再次登录。
-   - 当没有设备连接到 ESP8266 提供的 WiFi 网络时，设备将重置所有用户登录状态。
+2. **Automatic Time Update ⏰**:
+   - 🔄 After connecting to the ESP8266's AP, users access the device via a browser to set the current time, which the ESP8266 then uses to update its system time.
 
-## 使用方法 📋
+3. **VFD Display Control 💡**:
+   - **On/Off Control**: Users can turn the VFD display on or off via a web interface.
+   - **Brightness Adjustment**: A slider allows users to adjust the VFD display brightness in real-time via the web interface.
+   - **Scrolling Update Animation**: Implements a scrolling display of the time for enhanced visual effects.
+   - **Font Switching**: Users can switch between two different fonts for diverse and personalized displays.
 
-1. 启动 ESP8266 设备，设备将作为 WiFi 热点运行。
-2. 使用手机或其他设备连接到名为 `Loading...🚀` 的 WiFi 网络。
-3. 打开手机浏览器，访问任意网址，将自动重定向到设备的登录界面。
-4. 输入正确的密码后，进入主控制界面。
-5. 在控制界面中，用户可以：
-   - 通过按钮开启或关闭 VFD 显示。
-   - 使用滑动条调节 VFD 显示的亮度。
-   - 点击按钮设置当前时间，确保 VFD 时钟显示准确时间。
-6. 设备在没有设备连接时将自动进入浅睡眠模式，节省电能。当有设备连接时，将自动唤醒并处理请求。
+4. **Low Power Mode 💤**:
+   - 🔋 When no device is connected to the ESP8266's WiFi network, the device automatically enters light sleep mode to save power.
+   - 🔌 The device only handles client requests when not in light sleep mode, ensuring efficient power management.
 
-# 登录页面
+5. **User IP Address Recognition**:
+   - 🌐 Each user generates a unique token based on their device's IP address to individually determine their login status.
+   - 🔑 Once logged in, users don't need to log in again for a short period, enhancing the user experience.
 
-<img src="img/README_img/image-20240615231837256.png" alt="image-20240615231837256" style="zoom:67%;" />
+## Technical Implementation 🛠️
 
-# 字体切换
+1. **ESP8266 as an AP**:
+   - 📡 The ESP8266 is configured as an open WiFi hotspot that users can connect to without a password.
+   - 🔗 Uses the `WiFi.softAP` function to set up AP mode and `DNSServer` to redirect all domain requests to the ESP8266's IP address.
 
-粗体显示效果：
+2. **Web Control Interface 🌐**:
+   - 📄 Built-in simple HTML/CSS/JavaScript pages served by `ESP8266WebServer`.
+   - 🔐 The web interface includes a login page and a main control page. Users enter a password on the login page and are granted access to the main control page upon successful authentication.
+   - 🎛️ The main control page includes buttons to turn the VFD display on/off, a brightness adjustment slider, a font switch button, and a button to set the current time.
 
-<img src="img/README_img/image-20240617172340668.png" alt="image-20240617172340668" style="zoom:50%;" />
+3. **Time Synchronization 📅**:
+   - ⏳ Users set the current time, which is sent to the ESP8266 via JavaScript. The ESP8266 parses the time and updates its system time accordingly.
 
-字体设计：
+4. **Security 🔒**:
+   - 🔑 A simple login mechanism ensures that only authorized users can access the control interface, maintaining device security.
 
-<img src="img/README_img/image-20240617172558478.png" alt="image-20240617172558478" style="zoom:50%;" />
+5. **Scrolling Time Display Animation 🎞️**:
+   - 🌀 Implements scrolling time updates for enhanced visual effects and user experience.
 
-![e3f7060a5dccdef12487e0c1453e141](img/README/e3f7060a5dccdef12487e0c1453e141.jpg)
+6. **Low Power Mode Management**:
+   - 🌙 The device automatically enters light sleep mode when no devices are connected.
+   - 🛌 In light sleep mode, power consumption is reduced, and the device only handles necessary network requests upon waking.
 
-# 滚动动画
+7. **Font Switching**:
+   - ✒️ Users can switch between two different font styles via the web interface, adding variety to the display.
 
-![demo](img/README/demo.gif)
+8. **User IP Address Recognition**:
+   - 🌐 The `server.client().remoteIP().toString()` method retrieves the user's IP address and generates a unique token based on it.
+   - 🛡️ Each user is identified by their IP address token, which records their login status, eliminating the need for repeated logins in a short period.
+   - When no devices are connected to the ESP8266's WiFi network, the device resets all user login statuses.
 
-![Step1-D1-MINI参数表](img/README/Step1-D1-MINI参数表.png)
+## Usage Instructions 📋
 
-```c
-//适用于esp8266的引脚
-uint8_t din   = 12; // D6
-uint8_t clk   = 14; // D5
-uint8_t cs    = 4;  // D2
-uint8_t Reset = 1; 	// TX
-uint8_t en    = 3;  // RX
-```
+1. Power on the ESP8266 device, which will operate as a WiFi hotspot.
+2. Connect your phone or other device to the WiFi network named `Loading...🚀`.
+3. Open your browser and navigate to any URL; you will be automatically redirected to the device's login page.
+4. Enter the correct password to access the main control interface.
+5. In the control interface, users can:
+   - Turn the VFD display on or off using the button.
+   - Adjust the VFD display brightness using the slider.
+   - Set the current time by clicking the button to ensure accurate time display on the VFD clock.
+6. The device will automatically enter light sleep mode to save power when no devices are connected. It will wake up and handle requests when a device connects.
 
+# Login Page
 
+<img src="img/README_img/image-20240615231837256.png" alt="login page" style="zoom:67%;" />
 
-board:	esp8266 mini D1
+# Font Switching
 
-VFD:	LGL 工作室 VFD 8位显示模块
+Bold font display:
 
-CH340驱动版本：https://www.wch-ic.com/downloads/file/65.html?time=2023-03-16 22:57:59
+<img src="img/README_img/image-20240617172340668.png" alt="bold font" style="zoom:50%;" />
 
-arduino选择开发板WeMos D1 R1
+Font design:
 
+<img src="img/README_img/image-20240617172558478.png" alt="font design" style="zoom:50%;" />
+
+![font design example](img/README/e3f7060a5dccdef12487e0c1453e141.jpg)
+
+# Scrolling Animation
+
+![scrolling animation](img/README/demo.gif)
